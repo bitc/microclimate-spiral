@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Micro Climate Spiral</title>
+    <script src="index.js"></script>
+
+    <style>
+body {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-indent: 24px;
+    border-bottom: 1px dashed #aaf;
+}
+
+canvas {
+    border: 1px solid #888;
+}
+
+.control-row {
+    margin: 24px 0;
+}
+
+.control-label {
+    text-align: right;
+    display: inline-block;
+    width: 190px;
+    vertical-align: middle;
+}
+
+.control-input {
+    margin: 0 12px;
+    width: 80px;
+    vertical-align: middle;
+}
+
+.control-range {
+    width: 300px;
+    vertical-align: middle;
+}
+
+#people-img {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    height: 50px;
+}
+
+h4 {
+    text-indent: 12px;
+    text-decoration: underline;
+}
+    </style>
+
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td>
+                <div style="position: relative">
+                    <canvas id="canvas" width="650" height="650"></canvas>
+                    <img id="people-img" src="pioneer_plaque.png" />
+                </div>
+            </td>
+            <td>
+                <h1>Micro Climate Spiral</h1>
+                <p>Wheel Radius: red line</p>
+                <p>Pipe Diameter: blue lines</p>
+                <p>Pipe Diameter should be the "inside" of the pipe (not including the material of the pipe itself).</p>
+                <div id="control-panel">
+                </div>
+                <h4>Weight Considerations</h4>
+                <p>
+                    1 liter of water = 1 kilogram
+                </p>
+                <p>
+                    The weight of the pipe itself must also not be forgotten
+                    (Ask the supplier for the total weight of 1 meter of pipe,
+                    and multiply that by the Pipe Length)
+                </p>
+                <p>
+                    <small>Weight of an average car: 1,500 kilograms</small>
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
