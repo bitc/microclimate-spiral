@@ -1,10 +1,157 @@
+var leds = [];
+for (var i = 0; i < 500; ++i) {
+    leds.push([0, 0, 0]);
+}
+
+var coils = [];
+// inner-to-outer coils measurements:
+// coils.push(12);
+// coils.push(49);
+// coils.push(110);
+// coils.push(196);
+// coils.push(307);
+// coils.push(442);
+
+// outer-to-inner coils measurements:
+coils.push(19);
+coils.push(161);
+coils.push(278);
+coils.push(370);
+coils.push(438);
+coils.push(480);
+
+
+for (var i = 0; i < coils.length; ++i) {
+    leds[coils[i]][0] = 0;
+    leds[coils[i]][1] = 255;
+    leds[coils[i]][2] = 255;
+}
+
+
+var NUM_LEDS = 400;
+
+var counter = 8;
+function loop() {
+   counter++;
+    if (counter == 512) {
+        counter = 0;
+    }
+
+    for (var i = 0; i < leds.length; ++i) {
+        leds[i][0] = 0;
+        leds[i][1] = 0;
+        leds[i][2] = 0;
+    }
+/*
+
+    // for (var i = 0; i < coils.length; ++i) {
+    //     leds[coils[i]][0] = 0;
+    //     leds[coils[i]][1] = 255;
+    //     leds[coils[i]][2] = 0;
+    // }
+
+    // leds[counter][0] = 255;
+    // leds[counter][1] = 255;
+    // leds[counter][2] = 255;
+
+    for (var i = 0; i < coils.length - 1; ++i) {
+        var t = coils[i+1] - coils[i];
+        var p = Math.floor((t * counter) / 256) + coils[i];
+        leds[p][0] = 255;
+        leds[p][1] = 0;
+        leds[p][2] = 255;
+    }
+
+    for (var i = 0; i < coils.length - 1; ++i) {
+        var t = coils[i+1] - coils[i];
+        var p = Math.floor((t * ((counter + 85) % 256)) / 256) + coils[i];
+        leds[p][0] = 0;
+        leds[p][1] = 255;
+        leds[p][2] = 255;
+    }
+
+    var TRAIL = 32;
+*/
+    for (var i = 0; i < coils.length - 1; ++i) {
+        for (var j = coils[i]; j < coils[i+1]; ++j) {
+            var t = coils[i+1] - coils[i];
+            var p1 = Math.floor((t * counter) / 512) + coils[i];
+            var p2 = Math.floor((t * ((counter + 64) % 512)) / 512) + coils[i];
+            var p3 = Math.floor((t * ((counter + 128) % 512)) / 512) + coils[i];
+            var p4 = Math.floor((t * ((counter + 192) % 512)) / 512) + coils[i];
+            var p5 = Math.floor((t * ((counter + 256) % 512)) / 512) + coils[i];
+            var p6 = Math.floor((t * ((counter + 320) % 512)) / 512) + coils[i];
+            var p7 = Math.floor((t * ((counter + 384) % 512)) / 512) + coils[i];
+            var p8 = Math.floor((t * ((counter + 448) % 512)) / 512) + coils[i];
+
+            if (j == p1 || j == p2 || j == p3 || j == p4 || j == p5 || j == p6 || j == p7 || j == p8) {
+                leds[j][0] = 255;
+                leds[j][1] = 255;
+                leds[j][2] = 0;
+            // } else if () {
+            } else {
+                leds[j][0] = 32;
+                leds[j][1] = 32;
+                leds[j][2] = 32;
+            }
+        }
+    }
+
+/*
+    let ci = 0;
+    for (let i = coils[0]; i <= coils[coils.length - 1]; ++i) {
+        if (i === coils[ci + 1]) {
+            ci++;
+        }
+        let end = coils[ci + 1];
+        let start = coils[ci];
+        let t = end - start;
+        let alpha = Math.floor(((i - start) * 256) / t);
+        let d = (counter + 256 - alpha) % 256;
+        if (d <= 48) {
+            leds[i][0] = 0;
+            leds[i][1] = (48 - d) * 5;
+            leds[i][2] = 0;
+        }
+    }
+    */
+}
+
+var cycle = 0;
+function loop_water() {
+    var SPACING = 18;
+    var speed = 3;
+    for (var i = 0; i < NUM_LEDS; ++i) {
+        var phase = Math.floor(cycle / speed);
+        if (i % SPACING == phase % SPACING) {
+            leds[i][0] = 0;
+            leds[i][1] = 0;
+            leds[i][2] = 255;
+        } else if (i % SPACING + 1 == phase % SPACING) {
+            leds[i][0] = 0;
+            leds[i][1] = 0;
+            leds[i][2] = 150;
+        } else if (i % SPACING + 2 == phase % SPACING) {
+            leds[i][0] = 120;
+            leds[i][1] = 0;
+            leds[i][2] = 120;
+        } else {
+            leds[i][0] = 0;
+            leds[i][1] = 0;
+            leds[i][2] = 0;
+        }
+    }
+
+    cycle++;
+}
+
 function main() {
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
 
     var wheelRadius = 2.5;
     var pipeDiameter = 0.15;
-    var spiralCoils = 14;
+    var spiralCoils = 6.38;
 
     var peopleImg = document.getElementById("people-img");
 
@@ -15,6 +162,7 @@ function main() {
     var update = function () {
         // Calculate the points of the spiral:
         var points = calcSpiralPoints(wheelRadius, spiralCoils);
+        console.log(points.length);
 
         // Calculate the results:
         recommendedSpiralCoilsNode.nodeValue = (wheelRadius / pipeDiameter).toFixed(3);
@@ -37,7 +185,9 @@ function main() {
 
         // Draw the pipe:
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawPipe(ctx, [canvas.width / 2, canvas.height / 2], points, pipeDiameter, scaleFactor);
+        // drawPipe(ctx, [canvas.width / 2, canvas.height / 2], points, pipeDiameter, scaleFactor);
+
+        drawPoints(ctx, [canvas.width / 2, canvas.height / 2], points, leds, scaleFactor);
 
         // Red wheel radius line
         ctx.strokeStyle = "rgb(255, 0, 0)";
@@ -50,6 +200,14 @@ function main() {
         var peopleImgNaturalHeight = 1.77; // Average height of male human
         peopleImg.style.top = "" + ((wheelRadius - peopleImgNaturalHeight) * scaleFactor + canvas.height / 2) + "px";
         peopleImg.style.height = "" + (scaleFactor * peopleImgNaturalHeight) + "px";
+
+        var frameTick = function() {
+            loop();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPoints(ctx, [canvas.width / 2, canvas.height / 2], points, leds, scaleFactor);
+            requestAnimationFrame(frameTick);
+        };
+        requestAnimationFrame(frameTick);
     };
 
     // Create our control panel:
@@ -149,7 +307,7 @@ function calcSpiralPoints(radius, coils) {
     var awayStep = radius / thetaMax;
 
     // distance between points to plot
-    var chord = 0.04;
+    var chord = 0.1;
 
     result.push([0, 0]);
 
@@ -221,9 +379,11 @@ function drawPipe(ctx, offset, points, pipeDiameter, scaleFactor) {
     drawPipeContour(ctx, offset, points, pipeDiameter, scaleFactor);
 }
 
-function drawPipePoints(ctx, offset, points, scaleFactor) {
-    ctx.fillStyle = "rgb(200, 100, 100)";
+function drawPoints(ctx, offset, points, pixels, scaleFactor) {
+    drawPipePoints(ctx, offset, points, pixels, scaleFactor);
+}
 
+function drawPipePoints(ctx, offset, points, pixels, scaleFactor) {
     var length = points.length;
     var i;
     for (i = 0; i < length; ++i) {
@@ -232,6 +392,7 @@ function drawPipePoints(ctx, offset, points, scaleFactor) {
         var x = p[0] * scaleFactor + offset[0];
         var y = p[1] * scaleFactor + offset[1];
 
+        ctx.fillStyle = "rgb(" + pixels[pixels.length-1-i][0] + "," + pixels[pixels.length-1-i][1] + "," + pixels[pixels.length-1-i][2] + ")";
         ctx.beginPath();
         ctx.arc(x, y, 3, 0, 2 * Math.PI);
         ctx.fill();
